@@ -6,8 +6,15 @@ export async function login(email: string, password: string) {
     body: JSON.stringify({ email, password }),
   });
 
-  localStorage.setItem("token", data.token);
-  return data;
+  // Backend retorna array com objeto contendo access_token
+  const authData = Array.isArray(data) ? data[0] : data;
+
+  if (!authData.access_token) {
+    throw new Error("Login falhou: access_token não retornado");
+  }
+
+  localStorage.setItem("token", authData.access_token);
+  return authData;
 }
 
 export async function logout() {
