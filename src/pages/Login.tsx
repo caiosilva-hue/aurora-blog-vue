@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import { login } from "@/services/auth";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -17,15 +18,19 @@ const Login = () => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Simulate API call - will integrate with backend later
-    setTimeout(() => {
-      toast({
-        title: "Login realizado!",
-        description: "Bem-vindo de volta.",
-      });
-      setIsLoading(false);
+    try {
+      await login(email, password);
+      toast({ title: "Login realizado!", description: "Bem-vindo de volta." });
       navigate("/");
-    }, 1000);
+    } catch (err: any) {
+      toast({
+        title: "Erro no login",
+        description: err.message,
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
