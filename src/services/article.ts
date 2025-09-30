@@ -8,7 +8,7 @@ export function getArticle(id: string) {
   return apiFetch(`/article/${id}`, { method: "GET" });
 }
 
-export function createArticle(article: { title: string; content: string }) {
+export function createArticle(article: { title: string; content: string; image_url?: string }) {
   return apiFetch("/article", {
     method: "POST",
     body: JSON.stringify(article),

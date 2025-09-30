@@ -6,7 +6,9 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Post from "./pages/Post";
+import ArticleCreate from "./pages/ArticleCreate";
 import NotFound from "./pages/NotFound";
+import { ProtectedRoute } from "./routes/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -20,6 +22,7 @@ const App = () => (
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/post/:slug" element={<Post />} />
+          <Route path="/criar-artigo" element={<ProtectedRoute><ArticleCreate /></ProtectedRoute>} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
