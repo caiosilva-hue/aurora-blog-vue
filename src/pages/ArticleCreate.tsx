@@ -22,7 +22,11 @@ export default function ArticleCreate() {
     setIsLoading(true);
 
     try {
-      const article = await createArticle({ title, content, image_url: imageUrl });
+      const article = await createArticle({ 
+        title, 
+        content, 
+        image_url: imageUrl 
+      });
       toast({
         title: "Artigo criado!",
         description: "Seu post foi publicado com sucesso.",
