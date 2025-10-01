@@ -1,4 +1,4 @@
-const API_BASE = "https://primary-production-e91c.up.railway.app/webhook-test";
+const API_BASE = "https://primary-production-e91c.up.railway.app/webhook";
 
 export async function apiFetch(path: string, options: RequestInit = {}) {
   const token = localStorage.getItem("token");
