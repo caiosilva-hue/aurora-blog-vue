@@ -7,14 +7,13 @@ export function getArticles() {
 export function getArticle(id: string) {
   const userId = localStorage.getItem("user_id");
 
-  return apiFetch("/article", {
+  const query = new URLSearchParams({
+    id: id,
+    user_id: userId || ""
+  }).toString();
+
+  return apiFetch(`/article?${query}`, {
     method: "GET",
-    body: JSON.stringify({
-      query: {
-        id: id,
-        user_id: userId || ""
-      }
-    }),
   });
 }
 
