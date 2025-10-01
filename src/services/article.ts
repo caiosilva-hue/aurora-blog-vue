@@ -5,7 +5,17 @@ export function getArticles() {
 }
 
 export function getArticle(id: string) {
-  return apiFetch(`/article/${id}`, { method: "GET" });
+  const userId = localStorage.getItem("user_id");
+
+  return apiFetch("/article", {
+    method: "GET",
+    body: JSON.stringify({
+      query: {
+        id: id,
+        user_id: userId || ""
+      }
+    }),
+  });
 }
 
 export function createArticle(article: { title: string; content: string; image_url?: string; user_id?: string }) {

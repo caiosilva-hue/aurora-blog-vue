@@ -20,7 +20,7 @@ const Post = () => {
       try {
         setIsLoading(true);
         const data = await getArticle(id);
-        setArticle(data);
+        setArticle(data[0]);
       } catch (error: any) {
         toast({
           title: "Erro ao carregar artigo",
