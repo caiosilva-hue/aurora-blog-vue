@@ -35,7 +35,13 @@ export default function ArticleCreate() {
         image_url: imageUrl,
         user_id: userId,
       });
-      const article = articleArray[0];
+      
+      const article = Array.isArray(articleArray) ? articleArray[0] : articleArray;
+
+      if (!article || !article.id) {
+        throw new Error("Artigo não retornado pelo servidor.");
+      }
+
       toast({
         title: "Artigo criado!",
         description: "Seu post foi publicado com sucesso.",
