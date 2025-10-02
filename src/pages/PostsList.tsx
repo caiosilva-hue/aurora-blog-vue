@@ -40,6 +40,18 @@ const PostsList = () => {
     filterArticles();
   }, [searchTerm, articles]);
 
+  // SEO: title and meta description
+  useEffect(() => {
+    document.title = "Lista de Posts | Blog";
+    let meta = document.querySelector('meta[name="description"]') as HTMLMetaElement | null;
+    if (!meta) {
+      meta = document.createElement("meta");
+      meta.name = "description";
+      document.head.appendChild(meta);
+    }
+    meta.content = "Lista de posts do blog com pesquisa e paginação.";
+  }, []);
+
   const fetchArticles = async () => {
     try {
       setIsLoading(true);
@@ -65,9 +77,11 @@ const PostsList = () => {
       return;
     }
 
-    const filtered = articles.filter((article) =>
-      article.title.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const term = searchTerm.toLowerCase();
+    const filtered = articles.filter((article) => {
+      const title = (article?.title ?? "").toLowerCase();
+      return title.includes(term);
+    });
     setFilteredArticles(filtered);
     setCurrentPage(1);
   };
@@ -94,10 +108,11 @@ const PostsList = () => {
   };
 
   const formatDate = (dateString: string) => {
+    if (!dateString) return "";
     try {
       return format(new Date(dateString), "dd 'de' MMMM 'de' yyyy", { locale: ptBR });
     } catch {
-      return dateString;
+      return "";
     }
   };
 
@@ -151,7 +166,7 @@ const PostsList = () => {
                       <div className="aspect-video overflow-hidden rounded-t-lg">
                         <img
                           src={article.image_url}
-                          alt={article.title}
+                          alt={article.title || "Imagem do post"}
                           className="w-full h-full object-cover"
                         />
                       </div>
