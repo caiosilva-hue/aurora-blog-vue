@@ -19,14 +19,23 @@ export default function ArticleCreate() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const userId = localStorage.getItem("user_id");
+    if (!userId) {
+      navigate("/login");
+      return;
+    }
+
     setIsLoading(true);
 
     try {
-      const article = await createArticle({ 
+      const articleArray = await createArticle({ 
         title, 
         content, 
-        image_url: imageUrl 
+        image_url: imageUrl,
+        user_id: userId,
       });
+      const article = articleArray[0];
       toast({
         title: "Artigo criado!",
         description: "Seu post foi publicado com sucesso.",
