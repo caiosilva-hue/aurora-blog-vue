@@ -34,7 +34,7 @@ const Header = () => {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      navigate(`/?search=${encodeURIComponent(searchQuery)}`);
+      navigate(`/posts?search=${encodeURIComponent(searchQuery)}`);
     }
   };
 
@@ -69,6 +69,13 @@ const Header = () => {
             {isLoggedIn ? (
               <>
                 <Button
+                  onClick={() => navigate("/posts")}
+                  variant="outline"
+                  className="hidden sm:flex"
+                >
+                  Ver Posts
+                </Button>
+                <Button
                   onClick={() => navigate("/criar-artigo")}
                   className="hidden sm:flex"
                 >
@@ -81,6 +88,9 @@ const Header = () => {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => navigate("/posts")} className="sm:hidden">
+                      Ver Posts
+                    </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => navigate("/criar-artigo")} className="sm:hidden">
                       Novo Artigo
                     </DropdownMenuItem>
