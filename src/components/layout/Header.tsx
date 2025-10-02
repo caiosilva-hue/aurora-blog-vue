@@ -66,15 +66,15 @@ const Header = () => {
 
           {/* Auth Button */}
           <div className="flex items-center gap-2">
+            <Button
+              onClick={() => navigate("/posts")}
+              variant="outline"
+              className="hidden sm:flex"
+            >
+              Ver Posts
+            </Button>
             {isLoggedIn ? (
               <>
-                <Button
-                  onClick={() => navigate("/posts")}
-                  variant="outline"
-                  className="hidden sm:flex"
-                >
-                  Ver Posts
-                </Button>
                 <Button
                   onClick={() => navigate("/criar-artigo")}
                   className="hidden sm:flex"
@@ -122,6 +122,19 @@ const Header = () => {
             />
           </div>
         </form>
+        
+        {/* Mobile Ver Posts Button */}
+        {!isLoggedIn && (
+          <div className="pb-4 md:hidden">
+            <Button
+              onClick={() => navigate("/posts")}
+              variant="outline"
+              className="w-full"
+            >
+              Ver Posts
+            </Button>
+          </div>
+        )}
       </div>
     </header>
   );
