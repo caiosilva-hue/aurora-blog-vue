@@ -1,7 +1,10 @@
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import PostCard from "@/components/blog/PostCard";
 import Carousel from "@/components/blog/Carousel";
+import { Button } from "@/components/ui/button";
 
 // Mock data - will be replaced with API integration
 const featuredPosts = [
@@ -66,6 +69,13 @@ const allPosts = [
 ];
 
 const Home = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setIsLoggedIn(!!token);
+  }, []);
+
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
@@ -88,9 +98,16 @@ const Home = () => {
         {/* All Posts Grid */}
         <section className="py-12">
           <div className="container mx-auto px-4">
-            <h2 className="mb-8 text-2xl font-bold text-blog-title">
-              Todos os Posts
-            </h2>
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="text-2xl font-bold text-blog-title">
+                Todos os Posts
+              </h2>
+              {isLoggedIn && (
+                <Link to="/posts">
+                  <Button variant="outline">Ver todos os posts</Button>
+                </Link>
+              )}
+            </div>
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {allPosts.map((post) => (
                 <PostCard key={post.slug} {...post} variant="compact" />
