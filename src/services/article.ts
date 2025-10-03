@@ -1,20 +1,28 @@
 import { apiFetch } from "./api";
 
 export function getArticles(userId?: string) {
-  const query = userId ? `?user_id=${userId}` : "";
-  return apiFetch(`/article${query}`, { method: "GET" });
+  const body: { user_id?: string } = {};
+  if (userId) {
+    body.user_id = userId;
+  }
+  
+  return apiFetch("/get-articles", { 
+    method: "POST",
+    body: JSON.stringify(body),
+  });
 }
 
 export function getArticle(id: string) {
   const userId = localStorage.getItem("user_id");
+  
+  const body: { id: string; user_id?: string } = { id };
+  if (userId) {
+    body.user_id = userId;
+  }
 
-  const query = new URLSearchParams({
-    id: id,
-    user_id: userId || ""
-  }).toString();
-
-  return apiFetch(`/article?${query}`, {
-    method: "GET",
+  return apiFetch("/get-articles", {
+    method: "POST",
+    body: JSON.stringify(body),
   });
 }
 
