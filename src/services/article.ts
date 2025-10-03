@@ -1,7 +1,8 @@
 import { apiFetch } from "./api";
 
-export function getArticles() {
-  return apiFetch("/article", { method: "GET" });
+export function getArticles(userId?: string) {
+  const query = userId ? `?user_id=${userId}` : "";
+  return apiFetch(`/article${query}`, { method: "GET" });
 }
 
 export function getArticle(id: string) {

@@ -8,6 +8,7 @@ import Login from "./pages/Login";
 import Post from "./pages/Post";
 import PostsList from "./pages/PostsList";
 import ArticleCreate from "./pages/ArticleCreate";
+import ArticleEdit from "./pages/ArticleEdit";
 import NotFound from "./pages/NotFound";
 import { ProtectedRoute } from "./routes/ProtectedRoute";
 
@@ -25,6 +26,7 @@ const App = () => (
           <Route path="/posts" element={<PostsList />} />
           <Route path="/post/:slug" element={<Post />} />
           <Route path="/criar-artigo" element={<ProtectedRoute><ArticleCreate /></ProtectedRoute>} />
+          <Route path="/editar-artigo/:id" element={<ProtectedRoute><ArticleEdit /></ProtectedRoute>} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

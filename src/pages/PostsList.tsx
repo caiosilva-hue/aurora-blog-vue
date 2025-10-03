@@ -6,6 +6,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { Search, ChevronLeft, ChevronRight } from "lucide-react";
@@ -29,18 +31,31 @@ const PostsList = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [showMyPosts, setShowMyPosts] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const isLoggedIn = !!localStorage.getItem("token");
 
   useEffect(() => {
-    fetchArticles();
     // Set search term from URL parameter
     const searchFromUrl = searchParams.get("search");
     if (searchFromUrl) {
       setSearchTerm(searchFromUrl);
     }
+    
+    // Set showMyPosts from URL parameter
+    const userIdFromUrl = searchParams.get("user_id");
+    if (userIdFromUrl) {
+      setShowMyPosts(true);
+    }
+    
+    fetchArticles();
   }, []);
+
+  useEffect(() => {
+    fetchArticles();
+  }, [showMyPosts]);
 
   useEffect(() => {
     filterArticles();
@@ -61,7 +76,8 @@ const PostsList = () => {
   const fetchArticles = async () => {
     try {
       setIsLoading(true);
-      const data = await getArticles();
+      const userId = showMyPosts ? localStorage.getItem("user_id") : null;
+      const data = await getArticles(userId || undefined);
       const articlesArray = Array.isArray(data) ? data : [];
       setArticles(articlesArray);
       setFilteredArticles(articlesArray);
@@ -74,6 +90,28 @@ const PostsList = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleMyPostsToggle = (checked: boolean) => {
+    setShowMyPosts(checked);
+    const newParams = new URLSearchParams(searchParams);
+    
+    if (checked) {
+      const userId = localStorage.getItem("user_id");
+      if (userId) {
+        newParams.set("user_id", userId);
+      }
+    } else {
+      newParams.delete("user_id");
+    }
+    
+    setSearchParams(newParams);
+  };
+
+  const handleClearFilters = () => {
+    setSearchTerm("");
+    setShowMyPosts(false);
+    setSearchParams({});
   };
 
   const filterArticles = () => {
@@ -128,15 +166,38 @@ const PostsList = () => {
       <main className="flex-1 container mx-auto px-4 py-8">
         <div className="mb-8">
           <h1 className="text-4xl font-bold mb-4">Todos os Posts</h1>
-          <div className="relative max-w-md">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-            <Input
-              type="text"
-              placeholder="Pesquisar por título..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
+          <div className="flex flex-col md:flex-row gap-4 items-start md:items-end">
+            <div className="relative flex-1 max-w-md">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+              <Input
+                type="text"
+                placeholder="Pesquisar por título..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+            
+            {isLoggedIn && (
+              <div className="flex items-center gap-4">
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="myPosts"
+                    checked={showMyPosts}
+                    onCheckedChange={handleMyPostsToggle}
+                  />
+                  <Label htmlFor="myPosts" className="cursor-pointer">
+                    Somente meus posts
+                  </Label>
+                </div>
+                
+                {(searchTerm || showMyPosts) && (
+                  <Button variant="outline" size="sm" onClick={handleClearFilters}>
+                    Limpar filtros
+                  </Button>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
