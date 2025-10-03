@@ -34,13 +34,16 @@ export function createArticle(article: { title: string; content: string; image_u
   });
 }
 
-export function updateArticle(id: string, article: any) {
-  return apiFetch(`/article/${id}`, {
-    method: "PATCH",
+export function updateArticle(article: { id: string; title?: string; content?: string; image_url?: string }) {
+  return apiFetch("/update-article", {
+    method: "POST",
     body: JSON.stringify(article),
   });
 }
 
 export function deleteArticle(id: string) {
-  return apiFetch(`/article/${id}`, { method: "DELETE" });
+  return apiFetch("/delete-article", {
+    method: "POST",
+    body: JSON.stringify({ id }),
+  });
 }

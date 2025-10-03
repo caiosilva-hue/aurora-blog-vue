@@ -80,7 +80,8 @@ export default function ArticleEdit() {
     setIsLoading(true);
 
     try {
-      await updateArticle(id, {
+      await updateArticle({
+        id,
         title,
         content,
         image_url: imageUrl,
