@@ -36,7 +36,7 @@ export function createArticle(article: { title: string; content: string; image_u
     user_id: article.user_id || userId || "",
   };
 
-  return apiFetch("/article", {
+  return apiFetch("/post-article", {
     method: "POST",
     body: JSON.stringify(payload),
   });

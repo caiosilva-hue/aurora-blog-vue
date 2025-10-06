@@ -5,6 +5,7 @@ export async function apiFetch(path: string, options: RequestInit = {}) {
 
   const headers: HeadersInit = {
     "Content-Type": "application/json",
+    "Prefer": "return=representation",
     ...((options.headers as Record<string, string>) || {}),
   };
 
