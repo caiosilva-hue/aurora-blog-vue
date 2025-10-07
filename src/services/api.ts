@@ -18,11 +18,20 @@ export async function apiFetch(path: string, options: RequestInit = {}) {
     headers,
   });
 
-  const data = await res.json();
-
-  if (!data.success) {
-    throw new Error(data.error || "Erro na API");
+  // Tenta converter a resposta em JSON, se existir conteúdo
+  let data: any = null;
+  try {
+    data = await res.json();
+  } catch {
+    data = null;
   }
 
-  return data.data;
+  // Caso o backend retorne erro (status >= 400)
+  if (!res.ok) {
+    const message = data?.error || `Erro HTTP ${res.status}`;
+    throw new Error(message);
+  }
+
+  // Retorna o corpo da resposta (objeto, array ou vazio)
+  return data;
 }
