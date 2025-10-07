@@ -6,6 +6,8 @@ export async function apiFetch(path: string, options: RequestInit = {}) {
   const headers: HeadersInit = {
     "Content-Type": "application/json",
     "Prefer": "return=representation",
+    "apikey":
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpbndmbmVhb2N5am9zemxpeHpwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg3Mzk0ODYsImV4cCI6MjA3NDMxNTQ4Nn0.m75wbKpY_PWggGRpiQyPI_4q151mYDCFPNxeTRNin3c",
     ...((options.headers as Record<string, string>) || {}),
   };
 
