@@ -30,7 +30,7 @@ export async function apiFetch(path: string, options: RequestInit = {}) {
 
   // Caso o backend retorne erro (status >= 400)
   if (!res.ok) {
-    const message = data?.error || `Erro HTTP ${res.status}`;
+    const message = data?.message || data?.error || `Erro HTTP ${res.status}`;
 
     // Logout automático se JWT expirado, inválido ou email não confirmado
     if (
