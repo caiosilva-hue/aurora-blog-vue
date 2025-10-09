@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import PostCard from "@/components/blog/PostCard";
-import CommentsSection from "@/components/blog/CommentsSection";
+// import CommentsSection from "@/components/blog/CommentsSection";
 import { getArticle, deleteArticle } from "@/services/article";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -146,10 +146,10 @@ const Post = () => {
             </div>
           </article>
 
-          {/* Comments */}
-          <div className="mx-auto max-w-3xl">
+          {/* Comments - Em stand by */}
+          {/* <div className="mx-auto max-w-3xl">
             <CommentsSection comments={[]} />
-          </div>
+          </div> */}
         </div>
       </main>
 
