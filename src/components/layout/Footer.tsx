@@ -12,20 +12,6 @@ const Footer = () => {
             <span className="text-sm font-semibold text-blog-title">Blog</span>
           </div>
 
-          <nav className="flex flex-wrap justify-center gap-6 text-sm text-blog-text-light">
-            <Link to="/" className="transition-colors hover:text-primary">
-              Home
-            </Link>
-            <Link to="/sobre" className="transition-colors hover:text-primary">
-              Sobre
-            </Link>
-            <Link to="/contato" className="transition-colors hover:text-primary">
-              Contato
-            </Link>
-            <Link to="/privacidade" className="transition-colors hover:text-primary">
-              Privacidade
-            </Link>
-          </nav>
 
           <p className="text-sm text-blog-text-light">
             © {new Date().getFullYear()} Blog. Todos os direitos reservados.
