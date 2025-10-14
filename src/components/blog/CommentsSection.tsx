@@ -8,7 +8,7 @@ import { getComments, createComment, updateComment, deleteComment } from "@/serv
 import { useToast } from "@/hooks/use-toast";
 
 interface Comment {
-  id: string;
+  id: number;
   user_id: string;
   content: string;
   created_at: string;
@@ -21,7 +21,7 @@ interface CommentsSectionProps {
 const CommentsSection = ({ articleId }: CommentsSectionProps) => {
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
-  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<number | null>(null);
   const [editContent, setEditContent] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
@@ -69,7 +69,7 @@ const CommentsSection = ({ articleId }: CommentsSectionProps) => {
     }
   };
 
-  const handleEdit = async (commentId: string) => {
+  const handleEdit = async (commentId: number) => {
     if (!editContent.trim()) return;
 
     try {
@@ -90,7 +90,7 @@ const CommentsSection = ({ articleId }: CommentsSectionProps) => {
     }
   };
 
-  const handleDelete = async (commentId: string) => {
+  const handleDelete = async (commentId: number) => {
     if (!confirm("Tem certeza que deseja excluir este comentário?")) return;
 
     try {

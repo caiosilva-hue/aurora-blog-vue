@@ -20,14 +20,14 @@ export function createComment(content: string, articleId: string) {
   });
 }
 
-export function updateComment(commentId: string, content: string) {
+export function updateComment(commentId: number, content: string) {
   return apiFetch(`/update-comment?id=${commentId}`, {
     method: "POST",
     body: JSON.stringify({ content }),
   });
 }
 
-export function deleteComment(commentId: string) {
+export function deleteComment(commentId: number) {
   return apiFetch(`/delete-comment?id=${commentId}`, {
     method: "POST",
   });
