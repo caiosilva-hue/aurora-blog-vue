@@ -1,30 +1,112 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Calendar } from "lucide-react";
+import { Calendar, Edit2, Trash2 } from "lucide-react";
+import { getComments, createComment, updateComment, deleteComment } from "@/services/comments";
+import { useToast } from "@/hooks/use-toast";
 
 interface Comment {
   id: string;
-  author: string;
-  date: string;
+  user_id: string;
   content: string;
+  created_at: string;
 }
 
 interface CommentsSectionProps {
-  comments?: Comment[];
+  articleId: string;
 }
 
-const CommentsSection = ({ comments = [] }: CommentsSectionProps) => {
+const CommentsSection = ({ articleId }: CommentsSectionProps) => {
+  const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
-  const [isLoggedIn] = useState(false); // Will be dynamic later
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editContent, setEditContent] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const userId = localStorage.getItem("user_id");
+    setIsLoggedIn(!!token);
+    setCurrentUserId(userId);
+    loadComments();
+  }, [articleId]);
+
+  const loadComments = async () => {
+    try {
+      const data = await getComments(articleId);
+      setComments(data || []);
+    } catch (error: any) {
+      toast({
+        title: "Erro ao carregar comentários",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Will integrate with API later
-    console.log("New comment:", newComment);
-    setNewComment("");
+    if (!newComment.trim()) return;
+
+    try {
+      await createComment(newComment, articleId);
+      setNewComment("");
+      await loadComments();
+      toast({
+        title: "Comentário adicionado",
+        description: "Seu comentário foi publicado com sucesso.",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Erro ao adicionar comentário",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleEdit = async (commentId: string) => {
+    if (!editContent.trim()) return;
+
+    try {
+      await updateComment(commentId, editContent);
+      setEditingId(null);
+      setEditContent("");
+      await loadComments();
+      toast({
+        title: "Comentário atualizado",
+        description: "Seu comentário foi atualizado com sucesso.",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Erro ao atualizar comentário",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleDelete = async (commentId: string) => {
+    if (!confirm("Tem certeza que deseja excluir este comentário?")) return;
+
+    try {
+      await deleteComment(commentId);
+      await loadComments();
+      toast({
+        title: "Comentário excluído",
+        description: "Seu comentário foi removido com sucesso.",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Erro ao excluir comentário",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -75,20 +157,68 @@ const CommentsSection = ({ comments = [] }: CommentsSectionProps) => {
               <div className="flex gap-4">
                 <Avatar className="h-10 w-10">
                   <AvatarFallback className="bg-primary text-primary-foreground">
-                    {comment.author.charAt(0).toUpperCase()}
+                    U
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex-1 space-y-2">
-                  <div className="flex items-center gap-3">
-                    <span className="font-semibold text-blog-title">
-                      {comment.author}
-                    </span>
-                    <span className="flex items-center gap-1 text-xs text-blog-text-light">
-                      <Calendar className="h-3 w-3" />
-                      {comment.date}
-                    </span>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <span className="font-semibold text-blog-title">
+                        Usuário
+                      </span>
+                      <span className="flex items-center gap-1 text-xs text-blog-text-light">
+                        <Calendar className="h-3 w-3" />
+                        {new Date(comment.created_at).toLocaleDateString('pt-BR')}
+                      </span>
+                    </div>
+                    {currentUserId === comment.user_id && (
+                      <div className="flex gap-2">
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => {
+                            setEditingId(comment.id);
+                            setEditContent(comment.content);
+                          }}
+                        >
+                          <Edit2 className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => handleDelete(comment.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    )}
                   </div>
-                  <p className="text-blog-text">{comment.content}</p>
+                  {editingId === comment.id ? (
+                    <div className="space-y-2">
+                      <Textarea
+                        value={editContent}
+                        onChange={(e) => setEditContent(e.target.value)}
+                        className="min-h-[80px]"
+                      />
+                      <div className="flex gap-2">
+                        <Button size="sm" onClick={() => handleEdit(comment.id)}>
+                          Salvar
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            setEditingId(null);
+                            setEditContent("");
+                          }}
+                        >
+                          Cancelar
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="text-blog-text">{comment.content}</p>
+                  )}
                 </div>
               </div>
             </Card>
