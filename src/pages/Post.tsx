@@ -10,7 +10,8 @@ import { generatePractice, QuizQuestion } from "@/services/practice";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Edit, Trash2, Brain, Loader2 } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Edit, Trash2, Brain, Loader2, Lock } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -35,6 +36,7 @@ const Post = () => {
   const [practiceError, setPracticeError] = useState<string | null>(null);
   
   const currentUserId = localStorage.getItem("user_id");
+  const isLoggedIn = !!currentUserId;
   const isOwner = article && currentUserId && article.user_id === currentUserId;
 
   useEffect(() => {
@@ -182,14 +184,38 @@ const Post = () => {
           {/* Practice Button */}
           <div className="mx-auto max-w-3xl mt-8">
             {!practiceQuestions && !isPracticeLoading && (
-              <Button
-                onClick={handleStartPractice}
-                className="w-full"
-                size="lg"
-              >
-                <Brain className="w-5 h-5 mr-2" />
-                Praticar
-              </Button>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="w-full">
+                      <Button
+                        onClick={isLoggedIn ? handleStartPractice : undefined}
+                        className="w-full"
+                        size="lg"
+                        disabled={!isLoggedIn}
+                        variant={isLoggedIn ? "default" : "outline"}
+                      >
+                        {isLoggedIn ? (
+                          <>
+                            <Brain className="w-5 h-5 mr-2" />
+                            Praticar
+                          </>
+                        ) : (
+                          <>
+                            <Lock className="w-5 h-5 mr-2" />
+                            Praticar (Login necessário)
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </TooltipTrigger>
+                  {!isLoggedIn && (
+                    <TooltipContent>
+                      <p>Faça login para poder utilizar a função de Praticar</p>
+                    </TooltipContent>
+                  )}
+                </Tooltip>
+              </TooltipProvider>
             )}
 
             {isPracticeLoading && (
