@@ -15,10 +15,42 @@ const PracticeQuiz = ({ questions, onComplete }: PracticeQuizProps) => {
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [completedQuestions, setCompletedQuestions] = useState(0);
 
+  // Normaliza correct_option para sempre retornar apenas a letra (A-E)
+  const normalizeCorrectOption = (correctOption: string, options: string[]): string => {
+    const trimmed = correctOption.trim();
+    
+    // Caso 1: Já é apenas uma letra (A-E)
+    if (/^[A-E]$/i.test(trimmed)) {
+      return trimmed.toUpperCase();
+    }
+    
+    // Caso 2: Contém letra + ")" + texto (ex: "A) texto")
+    const letterMatch = trimmed.match(/^([A-E])\)/i);
+    if (letterMatch) {
+      return letterMatch[1].toUpperCase();
+    }
+    
+    // Caso 3: É apenas o texto da alternativa
+    // Busca nos options qual contém esse texto
+    for (const option of options) {
+      const optionText = option.substring(option.indexOf(")") + 1).trim().toLowerCase();
+      if (optionText === trimmed.toLowerCase()) {
+        return option.charAt(0).toUpperCase();
+      }
+    }
+    
+    // Fallback: retorna a primeira letra se nada funcionar
+    return trimmed.charAt(0).toUpperCase();
+  };
+
   const handleSelectOption = (option: string) => {
     setSelectedOption(option);
-    const optionLetter = option.charAt(0);
-    const correct = optionLetter === questions[currentQuestion].correct_option;
+    const optionLetter = option.charAt(0).toUpperCase();
+    const normalizedCorrect = normalizeCorrectOption(
+      questions[currentQuestion].correct_option,
+      questions[currentQuestion].options
+    );
+    const correct = optionLetter === normalizedCorrect;
     setIsCorrect(correct);
 
     if (correct) {
@@ -64,8 +96,12 @@ const PracticeQuiz = ({ questions, onComplete }: PracticeQuizProps) => {
         <div className="space-y-2">
           {question.options.map((option, index) => {
             const isSelected = selectedOption === option;
-            const optionLetter = option.charAt(0);
-            const isCorrectOption = optionLetter === question.correct_option;
+            const optionLetter = option.charAt(0).toUpperCase();
+            const normalizedCorrect = normalizeCorrectOption(
+              question.correct_option,
+              question.options
+            );
+            const isCorrectOption = optionLetter === normalizedCorrect;
             
             return (
               <Button
