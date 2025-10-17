@@ -18,5 +18,7 @@ export async function generatePractice(title: string, content: string) {
     body: JSON.stringify({ title, content }),
   });
 
-  return data[0] as PracticeResponse;
+  // O backend retorna um array com um único objeto
+  const response = Array.isArray(data) ? data[0] : data;
+  return response as PracticeResponse;
 }
