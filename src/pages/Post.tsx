@@ -9,7 +9,8 @@ import { getArticle, deleteArticle } from "@/services/article";
 import { generatePractice, QuizQuestion } from "@/services/practice";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
-import { Edit, Trash2, Brain } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Edit, Trash2, Brain, Loader2 } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -180,16 +181,27 @@ const Post = () => {
 
           {/* Practice Button */}
           <div className="mx-auto max-w-3xl mt-8">
-            {!practiceQuestions && (
+            {!practiceQuestions && !isPracticeLoading && (
               <Button
                 onClick={handleStartPractice}
-                disabled={isPracticeLoading}
                 className="w-full"
                 size="lg"
               >
                 <Brain className="w-5 h-5 mr-2" />
-                {isPracticeLoading ? "Gerando prática..." : "Praticar"}
+                Praticar
               </Button>
+            )}
+
+            {isPracticeLoading && (
+              <div className="space-y-4 animate-fade-in">
+                <div className="flex items-center justify-center gap-2 text-muted-foreground mb-4">
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  <span>Gerando prática...</span>
+                </div>
+                <Skeleton className="h-32 w-full rounded-lg" />
+                <Skeleton className="h-24 w-full rounded-lg" />
+                <Skeleton className="h-24 w-3/4 rounded-lg" />
+              </div>
             )}
             
             {practiceQuestions && (
