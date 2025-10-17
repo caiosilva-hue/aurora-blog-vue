@@ -4,10 +4,12 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import PostCard from "@/components/blog/PostCard";
 import CommentsSection from "@/components/blog/CommentsSection";
+import PracticeQuiz from "@/components/blog/PracticeQuiz";
 import { getArticle, deleteArticle } from "@/services/article";
+import { generatePractice, QuizQuestion } from "@/services/practice";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
-import { Edit, Trash2 } from "lucide-react";
+import { Edit, Trash2, Brain } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -27,6 +29,9 @@ const Post = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [practiceQuestions, setPracticeQuestions] = useState<QuizQuestion[] | null>(null);
+  const [isPracticeLoading, setIsPracticeLoading] = useState(false);
+  const [practiceError, setPracticeError] = useState<string | null>(null);
   
   const currentUserId = localStorage.getItem("user_id");
   const isOwner = article && currentUserId && article.user_id === currentUserId;
@@ -79,6 +84,33 @@ const Post = () => {
       setIsDeleting(false);
       setShowDeleteDialog(false);
     }
+  };
+
+  const handleStartPractice = async () => {
+    if (!article) return;
+    
+    try {
+      setIsPracticeLoading(true);
+      setPracticeError(null);
+      const response = await generatePractice(article.title, article.content);
+      setPracticeQuestions(response.output.questions);
+    } catch (error: any) {
+      setPracticeError(error.message || "Erro ao gerar prática");
+      toast({
+        title: "Erro ao gerar prática",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setIsPracticeLoading(false);
+    }
+  };
+
+  const handleCompletePractice = () => {
+    toast({
+      title: "Prática concluída!",
+      description: "Parabéns! Você acertou todas as questões.",
+    });
   };
 
   if (isLoading) {
@@ -145,6 +177,28 @@ const Post = () => {
               {article.content}
             </div>
           </article>
+
+          {/* Practice Button */}
+          <div className="mx-auto max-w-3xl mt-8">
+            {!practiceQuestions && (
+              <Button
+                onClick={handleStartPractice}
+                disabled={isPracticeLoading}
+                className="w-full"
+                size="lg"
+              >
+                <Brain className="w-5 h-5 mr-2" />
+                {isPracticeLoading ? "Gerando prática..." : "Praticar"}
+              </Button>
+            )}
+            
+            {practiceQuestions && (
+              <PracticeQuiz
+                questions={practiceQuestions}
+                onComplete={handleCompletePractice}
+              />
+            )}
+          </div>
 
           <div className="mx-auto max-w-3xl">
             <CommentsSection articleId={article.id} />
