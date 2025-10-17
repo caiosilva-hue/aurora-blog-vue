@@ -45,9 +45,9 @@ const Header = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-              <span className="text-lg font-bold text-primary-foreground">B</span>
+              <span className="text-lg font-bold text-primary-foreground">A</span>
             </div>
-            <span className="text-xl font-bold text-blog-title">Blog</span>
+            <span className="text-xl font-bold text-blog-title">Aurora</span>
           </Link>
 
           {/* Search Bar - Hidden on mobile */}
